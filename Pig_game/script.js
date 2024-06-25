@@ -28,31 +28,37 @@ const change_image = function (number) {
     imagedice.src = photos[number - 1]; 
 }
 
-const change_score1 = function (number) {
-    scoreplayer1 += number ; 
+const change_score1 = function () {
+    scoreplayer1 += currentplayer1 ; 
     score1.textContent = scoreplayer1 ; 
-}
-
-const change_score2 = function (number) {
-    scoreplayer2 += number ; 
-    score2.textContent = scoreplayer2 ; 
-}
-
-const change_current1 = function (scoreplayer1) {
-    currentplayer1 += scoreplayer1 ; 
-    scoreplayer1 = 0 ; 
-    current1.textContent = currentplayer1 ; 
-    score1.textContent = 0 ; 
+    currentplayer1 = 0 ; 
+    current1.textContent = 0 ; 
     sec1.classList.remove('player--active') ; 
-    sec2.classList.add('player--active') ;  
+    sec2.classList.add('player--active') ; 
 }
-const change_current2 = function (scoreplayer2) {
-    currentplayer2 += scoreplayer2 ; 
-    scoreplayer2 = 0 ; 
-    current2.textContent = currentplayer2 ;
-    score2.textContent = 0 ; 
+
+const change_score2 = function () {
+    scoreplayer2 += currentplayer2 ; 
+    score2.textContent = scoreplayer2 ; 
+    currentplayer2 = 0 ; 
+    current2.textContent = 0 ; 
     sec2.classList.remove('player--active') ; 
     sec1.classList.add('player--active') ; 
+}
+
+const change_current1 = function (number) {
+    if(number == 1)
+        number = 0 ; 
+    currentplayer1 += number ; 
+    current1.textContent = currentplayer1 ;  
+}
+
+
+const change_current2 = function (number) {
+    if(number == 1)
+        number = 0 ; 
+    currentplayer2 += number ; 
+    current2.textContent = currentplayer2 ;    
 }
 
 const switchactive = function () {
@@ -63,33 +69,62 @@ const switchactive = function () {
        
 }
 
+const winer = function (player1) {
+    if (player1 === 1) {
+        if(scoreplayer1 >= 100) {
+            sec1.classList.remove('player--active') ; 
+            sec1.classList.add('player--winner') ; 
+        }
+    }
+    else {
+        if (scoreplayer2 >= 100) {
+            sec2.classList.remove('player--active') ; 
+            sec2.classList.add('player--winner') ; 
+        }
+    }
+}
 
+const changeplayer = function() {
+    player1 === 1 ? player1 = 0 : player1 = 1 ; 
+    player2 === 1 ? player2 = 0 : player2 = 1 ; 
+}
 
+const normalmode = function () {
+    if(sec1.classList.contains('player--winner')) 
+        sec1.classList.remove('player--winner') ; 
+    if(sec2.classList.contains('player--winner')) 
+        sec2.classList.remove('player--winner') ;
+}
 // dynamic 
 role.addEventListener('click' , function() {
     if (imagedice.classList.contains('hidden')) 
         imagedice.classList.remove('hidden') ; 
     const number = Math.trunc(Math.random() *6) + 1 ; 
-    change_image(number) ; 
-    player1 === 1 ? change_score1(number) : change_score2(number) ; 
+    if (number === 1) {
+        player1 === 1 ? change_score1() : change_score2() ; 
+        changeplayer() ; 
+    }
+    change_image(number) ;  
+    player1 === 1 ? change_current1(number) : change_current2(number) ; 
     
 })
 
 hold.addEventListener('click' , function() {
-    player1 === 1 ? change_current1(scoreplayer1) : change_current2(scoreplayer2) ; 
-    player1 === 1 ? player1 = 0 : player1 = 1 ; 
-    player2 === 1 ? player2 = 0 : player2 = 1 ; 
+    player1 === 1 ? change_score1() : change_score2() ; 
+    winer(player1) ;
+    changeplayer() ; 
 })
 
 
 newgame.addEventListener('click' , function() {
-   imagedice.classList.add('hidden');
-   switchactive() ; 
+    imagedice.classList.add('hidden');
+    normalmode() ;
+    switchactive() ;  
     current1.textContent = 0 ; 
     current2.textContent = 0 ; 
     score1.textContent = 0 ; 
     score2.textContent = 0 ; 
     currentplayer1 = 0  , currentplayer2 = 0 ; 
-    scoreplayer1 = 0 , scoreplayer2 = 0 ;  
+    scoreplayer1 = 0 , scoreplayer2 = 0 ; 
 }
 )
